@@ -10,7 +10,7 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 const router = express.Router();
 
-router.get('/contacts../contacts', ctrlWrapper(getContacts));
+router.get('/contacts', ctrlWrapper(getContacts));
 router.get('/contacts/:contactId', ctrlWrapper(getContact));
 router.post('/contacts', ctrlWrapper(createContact));
 router.patch('/contacts/:contactId', ctrlWrapper(updateContact));
