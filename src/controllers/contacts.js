@@ -1,11 +1,11 @@
-import createHttpError from 'http-errors';
 import {
   getAllContacts,
   getContactById,
-  createContact,
-  updateContact,
-  deleteContact,
+  createContact as createContactService,
+  updateContact as сontactUpdate,
+  deleteContact as contactDelete,
 } from '../services/contacts.js';
+import createHttpError from 'http-errors';
 
 export const getContacts = async (req, res) => {
   const contacts = await getAllContacts();
@@ -19,11 +19,9 @@ export const getContacts = async (req, res) => {
 export const getContact = async (req, res) => {
   const { contactId } = req.params;
   const contact = await getContactById(contactId);
-
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
-
   res.status(200).json({
     status: 200,
     message: `Successfully found contact with id ${contactId}!`,
@@ -31,24 +29,21 @@ export const getContact = async (req, res) => {
   });
 };
 
-export const createContactController = async (req, res) => {
+export const createContact = async (req, res) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-
   if (!name || !phoneNumber || !contactType) {
     throw createHttpError(
       400,
-      'Missing required fields: name, phoneNumber, contactType',
+      'Name, phoneNumber, and contactType are required',
     );
   }
-
-  const contact = await createContact({
+  const contact = await createContactService({
     name,
     phoneNumber,
     email,
     isFavourite: isFavourite || false,
     contactType,
   });
-
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -56,20 +51,16 @@ export const createContactController = async (req, res) => {
   });
 };
 
-export const updateContactController = async (req, res) => {
+export const updateContact = async (req, res) => {
   const { contactId } = req.params;
   const updateData = req.body;
-
   if (Object.keys(updateData).length === 0) {
     throw createHttpError(400, 'No fields provided for update');
   }
-
-  const contact = await updateContact(contactId, updateData);
-
+  const contact = await сontactUpdate(contactId, updateData);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
-
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a contact!',
@@ -77,13 +68,11 @@ export const updateContactController = async (req, res) => {
   });
 };
 
-export const deleteContactController = async (req, res) => {
+export const deleteContact = async (req, res) => {
   const { contactId } = req.params;
-  const contact = await deleteContact(contactId);
-
+  const contact = await contactDelete(contactId);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
-
   res.status(204).send();
 };
