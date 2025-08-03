@@ -17,15 +17,27 @@ export const getContacts = async (req, res) => {
     isFavourite,
   } = req.query;
 
-  const pageNum = parseInt(page, 10);
-  const perPageNum = parseInt(perPage, 10);
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const perPageNum = Math.max(parseInt(perPage, 10) || 10, 1);
   const skip = (pageNum - 1) * perPageNum;
 
   const filter = {};
   if (type) filter.contactType = type;
-  if (isFavourite !== undefined) filter.isFavourite = isFavourite === 'true';
+  if (isFavourite !== undefined) {
+    filter.isFavourite = isFavourite === 'true' || isFavourite === true;
+  }
 
-  const sort = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+  const validSortFields = [
+    'name',
+    'phoneNumber',
+    'email',
+    'contactType',
+    'createdAt',
+    'updatedAt',
+  ];
+  const sortField = validSortFields.includes(sortBy) ? sortBy : 'name';
+  const sortValue = sortOrder === 'desc' ? -1 : 1;
+  const sort = { [sortField]: sortValue };
 
   const [contacts, totalItems] = await Promise.all([
     getAllContacts({ filter, skip, limit: perPageNum, sort }),
