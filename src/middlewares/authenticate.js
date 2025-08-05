@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 import { verifyToken } from '../services/auth.js';
 
 export const authenticate = async (req, res, next) => {
+  console.log('Authenticate middleware called for:', req.path);
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw createHttpError(401, 'Authorization header missing or invalid');
