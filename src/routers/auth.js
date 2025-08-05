@@ -2,6 +2,7 @@ import express from 'express';
 import { register, login, refresh, logout } from '../controllers/auth.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
+import { authenticate } from '../middlewares/authenticate.js';
 import Joi from 'joi';
 
 const registerSchema = Joi.object({
@@ -23,7 +24,8 @@ router.post(
   ctrlWrapper(register),
 );
 router.post('/auth/login', validateBody(loginSchema), ctrlWrapper(login));
-router.post('/auth/refresh', ctrlWrapper(refresh));
-router.post('/auth/logout', ctrlWrapper(logout));
+
+router.post('/auth/refresh', authenticate, ctrlWrapper(refresh));
+router.post('/auth/logout', authenticate, ctrlWrapper(logout));
 
 export default router;
