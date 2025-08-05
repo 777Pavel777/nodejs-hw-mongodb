@@ -16,6 +16,12 @@ export const setupServer = () => {
   app.use(express.json());
   app.use(cookieParser());
 
+  // Логування всіх вхідних запитів для діагностики
+  app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.path}`);
+    next();
+  });
+
   app.use('/', authRouter);
   app.use('/', contactsRouter);
 
