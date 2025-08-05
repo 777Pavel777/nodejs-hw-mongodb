@@ -13,12 +13,17 @@ if (!MONGODB_PASSWORD) {
 }
 
 export const registerUser = async ({ name, email, password }) => {
+  if (!name || !email || !password) {
+    throw createHttpError(400, 'Name, email, and password are required');
+  }
+
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw createHttpError(409, 'Email in use');
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+
   let user;
   try {
     user = await User.create({ name, email, password: hashedPassword });
@@ -26,11 +31,18 @@ export const registerUser = async ({ name, email, password }) => {
     throw createHttpError(500, `Failed to create user: ${error.message}`);
   }
 
-  if (!user || typeof user.toObject !== 'function') {
-    throw createHttpError(500, 'Failed to create user: Invalid user document');
+  if (!user) {
+    throw createHttpError(500, 'Failed to create user: User object is null');
   }
 
-  const { password: _, ...userData } = user.toObject();
+  const userData = {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+
   return userData;
 };
 
