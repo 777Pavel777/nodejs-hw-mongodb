@@ -116,7 +116,6 @@ export const logoutUser = async (refreshToken) => {
   if (!session) {
     throw createHttpError(401, 'Session not found');
   }
-  console.log(`Session deleted for refreshToken: ${refreshToken}`);
 };
 
 export const verifyToken = async (token) => {

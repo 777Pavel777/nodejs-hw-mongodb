@@ -17,8 +17,6 @@ export const setupServer = () => {
   app.use(cookieParser());
 
   app.use((req, res, next) => {
-    console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
-    console.log('Cookies:', req.cookies);
     next();
   });
 
